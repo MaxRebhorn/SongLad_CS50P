@@ -17,7 +17,7 @@ def search_for_mention(Bot):
     Bot.subreddit
 
 
-
+#test if git works
 
 if __name__ == "__main__":
     main()
