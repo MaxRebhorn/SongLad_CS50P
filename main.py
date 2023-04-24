@@ -20,17 +20,21 @@ def create_reddit_bot():
 
 def search_for_mention(Bot):
     subreddit = Bot.subreddit("Botsplayhere")
-    try:
-        comments = 0
-        for comment in subreddit.stream.comments():
-            comments += 1
-            print(comments)
-            if "u/SongLad" in comment.body.lower():
-                print("Found one")
-                comment.reply("Hello i am bot")
+    already_replied_to_comment = set()
+    while True:
+        try:
+            comments = 0
+            for mention in Bot.inbox.mentions():
+                comments += 1
+                print(comments)
+                if isinstance(mention,praw.models.Comment):
+                    if mention not in already_replied_to_comment:
+                        print("Found one")
+                        already_replied_to_comment.add(mention)
+                        mention.reply("Hello i am bot")
 
-    except prawcore.exceptions.BadRequest:
-        print("error")
+        except prawcore.exceptions.BadRequest:
+            print("error")
 
 
 #test if git works lel aaaah waaaaaaaa
