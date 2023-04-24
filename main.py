@@ -1,5 +1,10 @@
 import praw
+import prawcore.exceptions
+
+
 def main():
+    global reddit_api_counter
+    reddit_api_counter = 0
     Bot = create_reddit_bot()
     search_for_mention(Bot)
 
@@ -14,7 +19,18 @@ def create_reddit_bot():
     return Bot
 
 def search_for_mention(Bot):
-    Bot.subreddit
+    subreddit = Bot.subreddit("Botsplayhere")
+    try:
+        comments = 0
+        for comment in subreddit.stream.comments():
+            comments += 1
+            print(comments)
+            if "u/SongLad" in comment.body.lower():
+                print("Found one")
+                comment.reply("Hello i am bot")
+
+    except prawcore.exceptions.BadRequest:
+        print("error")
 
 
 #test if git works lel aaaah waaaaaaaa
