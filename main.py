@@ -1,7 +1,6 @@
 import praw
 import prawcore.exceptions
 
-
 def main():
     global reddit_api_counter
     reddit_api_counter = 0
@@ -19,7 +18,6 @@ def create_reddit_bot():
     return Bot
 
 def search_for_mention(Bot):
-    subreddit = Bot.subreddit("Botsplayhere")
     already_replied_to_comment = set()
     while True:
         try:
@@ -29,14 +27,15 @@ def search_for_mention(Bot):
                 print(comments)
                 if isinstance(mention,praw.models.Comment):
                     if mention not in already_replied_to_comment:
-                        print("Found one")
-                        already_replied_to_comment.add(mention)
-                        mention.reply("Hello i am bot")
+                        if mention.submission.is_video:
+                            print("Found one")
+                            already_replied_to_comment.add(mention)
+                            mention.reply("Hello i am bot")
 
         except prawcore.exceptions.BadRequest:
             print("error")
-
-
+def find_song():
+    ...
 #test if git works lel aaaah waaaaaaaa
 
 if __name__ == "__main__":
