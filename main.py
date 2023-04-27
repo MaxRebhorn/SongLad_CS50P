@@ -1,16 +1,14 @@
 import praw
 import prawcore.exceptions
-import requests
 import re
 import lyricsgenius as genius
 
 def main():
-    global reddit_api_counter
-    reddit_api_counter = 0
     Bot = create_reddit_bot()
-    songname,mention = search_for_mention(Bot)
-    song_lyrics = find_song(songname,mention)
-    mention.reply(song_lyrics)
+    while True:
+        songname,mention = search_for_mention(Bot)
+        song_lyrics = find_song(songname)
+        mention.reply(song_lyrics)
 
 
 def create_reddit_bot():
@@ -29,7 +27,6 @@ def search_for_mention(Bot):
             comments = 0
             for mention in Bot.inbox.mentions():
                 comments += 1
-                print(comments)
                 if isinstance(mention,praw.models.Comment):
                     if mention.new == True:
                         print("Found one")
@@ -38,18 +35,22 @@ def search_for_mention(Bot):
                         mention.reply("Hello i am bot")
                         try:
                             songname = re.sub(r"u/SongLad", "", mention.body, flags=re.IGNORECASE)
+                            print(songname)
+                            songname = songname.strip()
+                            return songname, mention
                         except ValueError:
                             mention.reply("no song title was given")
 
         except prawcore.exceptions.BadRequest:
             print("error")
-    return songname,mention
 def find_song(songname):
     Genius = genius.Genius("zH_HyGzT82X43jyLRuf4q2NX1rRp63rPy2sNU4wXNf5nlcmHTgrjhzPwVS19UkQw")
-    song = Genius.search_song(songname)
-    if song != None:
-        return song.lyrics
-    else:
+    try:
+        song = Genius.search_song(songname)
+        if song != None:
+            song_lyrics = re.sub(r"^\[\w+\]\s*|\s*\[[^\]]*\]\s*|Intro.*|embed.*$", "", song.lyrics, flags=re.IGNORECASE | re.MULTILINE)
+            return song_lyrics
+    except TimeoutError:
         return None
 
 #test if git works lel aaaah waaaaaaaa
