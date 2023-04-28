@@ -8,7 +8,10 @@ def main():
     while True:
         songname,mention = search_for_mention(Bot)
         song_lyrics = find_song(songname)
-        mention.reply(song_lyrics)
+        if song_lyrics == None:
+            mention.reply("Couldnt't find that song")
+        else:
+            mention.reply(song_lyrics)
 
 
 def create_reddit_bot():
@@ -32,7 +35,6 @@ def search_for_mention(Bot):
                         print("Found one")
                         already_replied_to_comment.add(mention)
                         mention.mark_read()
-                        mention.reply("Hello i am bot")
                         try:
                             songname = re.sub(r"u/SongLad", "", mention.body, flags=re.IGNORECASE)
                             print(songname)
@@ -48,12 +50,10 @@ def find_song(songname):
     try:
         song = Genius.search_song(songname)
         if song != None:
-            song_lyrics = re.sub(r"^\[\w+\]\s*|\s*\[[^\]]*\]\s*|Intro.*|embed.*$", "", song.lyrics, flags=re.IGNORECASE | re.MULTILINE)
-            return song_lyrics
+            return song.lyrics
     except TimeoutError:
         return None
-
-#test if git works lel aaaah waaaaaaaa
+def format_song_lyrics(song_lyrics):
 
 if __name__ == "__main__":
     main()
