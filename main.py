@@ -2,12 +2,14 @@ import praw
 import prawcore.exceptions
 import re
 import lyricsgenius as genius
+import requests
 
 def main():
     Bot = create_reddit_bot()
     while True:
         songname,mention = search_for_mention(Bot)
         song_lyrics = find_song(songname)
+        song_lyrics = format_song_lyrics(song_lyrics)
         if song_lyrics == None:
             mention.reply("Couldnt't find that song")
         else:
@@ -51,9 +53,12 @@ def find_song(songname):
         song = Genius.search_song(songname)
         if song != None:
             return song.lyrics
-    except TimeoutError:
+    except requests.exceptions.Timeout:
         return None
 def format_song_lyrics(song_lyrics):
+    song_lyrics = re.sub(r"^.+Lyrics","",song_lyrics)
+    formatted_song_lyrics = re.sub(r"\d+Embed$","",song_lyrics)
+    return formatted_song_lyrics
 
 if __name__ == "__main__":
     main()
