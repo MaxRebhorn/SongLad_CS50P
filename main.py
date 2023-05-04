@@ -9,7 +9,6 @@ def main():
     while True:
         songname,mention = search_for_mention(Bot)
         song_lyrics = find_song(songname)
-        song_lyrics = format_song_lyrics(song_lyrics)
         if song_lyrics == None:
             mention.reply("Couldnt't find that song")
         else:
